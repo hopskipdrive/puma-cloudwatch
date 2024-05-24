@@ -1,6 +1,7 @@
 class PumaCloudwatch::Metrics
   class Parser
-    METRICS = [:backlog, :running, :pool_capacity, :max_threads]
+    METRICS = [:backlog, :running, :pool_capacity, :max_threads, :requests_count]
+    WORKER_METRICS = [:workers, :booted_workers]
 
     def initialize(data)
       @data = data
@@ -29,6 +30,10 @@ class PumaCloudwatch::Metrics
             count = status[metric.to_s]
             item[metric] += [count] if count
           end
+        end
+        WORKER_METRICS.each do |metric|
+          count = stats[metric.to_s]
+          item[metric] += [count] if count
         end
       else # single mode
         METRICS.each do |metric|
